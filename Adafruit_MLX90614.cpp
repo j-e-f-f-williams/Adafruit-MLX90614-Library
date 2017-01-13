@@ -23,8 +23,13 @@ Adafruit_MLX90614::Adafruit_MLX90614(uint8_t i2caddr) {
 }
 
 
+boolean Adafruit_MLX90614::begin(WIRECLASS& newWireBus) {
+	wireBus = &newWireBus;
+	begin( );
+}
+
 boolean Adafruit_MLX90614::begin(void) {
-  Wire.begin();
+  wireBus->begin();
 
   /*
   for (uint8_t i=0; i<0x20; i++) {
@@ -70,15 +75,15 @@ float Adafruit_MLX90614::readTemp(uint8_t reg) {
 uint16_t Adafruit_MLX90614::read16(uint8_t a) {
   uint16_t ret;
 
-  Wire.beginTransmission(_addr); // start transmission to device 
-  Wire.write(a); // sends register address to read from
-  Wire.endTransmission(false); // end transmission
+  wireBus->beginTransmission(_addr); // start transmission to device 
+  wireBus->write(a); // sends register address to read from
+  wireBus->endTransmission(false); // end transmission
   
-  Wire.requestFrom(_addr, (uint8_t)3);// send data n-bytes read
-  ret = Wire.read(); // receive DATA
-  ret |= Wire.read() << 8; // receive DATA
+  wireBus->requestFrom(_addr, (uint8_t)3);// send data n-bytes read
+  ret = wireBus->read(); // receive DATA
+  ret |= wireBus->read() << 8; // receive DATA
 
-  uint8_t pec = Wire.read();
+  uint8_t pec = wireBus->read();
 
   return ret;
 }

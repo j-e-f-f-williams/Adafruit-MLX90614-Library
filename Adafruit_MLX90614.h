@@ -21,7 +21,18 @@
 #else
  #include "WProgram.h"
 #endif
-#include "Wire.h"
+
+#if defined( CORE_TEENSY )
+	#include "i2c_t3.h"
+	#ifndef WIRECLASS
+	  #define WIRECLASS i2c_t3
+	#endif
+#else
+  #include "Wire.h"
+	#ifndef WIRECLASS
+	  #define WIRECLASS TwoWire
+	#endif
+#endif
 
 
 #define MLX90614_I2CADDR 0x5A
@@ -49,6 +60,7 @@
 class Adafruit_MLX90614  {
  public:
   Adafruit_MLX90614(uint8_t addr = MLX90614_I2CADDR);
+  boolean begin(WIRECLASS& newWireBus); 
   boolean begin();
   uint32_t readID(void);
 
@@ -63,5 +75,7 @@ class Adafruit_MLX90614  {
   uint8_t _addr;
   uint16_t read16(uint8_t addr);
   void write16(uint8_t addr, uint16_t data);
+  WIRECLASS *wireBus = &Wire;
+
 };
 
